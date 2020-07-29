@@ -1,0 +1,23 @@
+{
+  "name": "graphql-mock-example",
+  "description": "Mock out a GraphQL schema from the client",
+  "version": "0.0.4",
+  "scripts": {
+    "test-app:run": "cd client && SKIP_PREFLIGHT_CHECK=true npm start",
+    "test-app:build": "cd client && SKIP_PREFLIGHT_CHECK=true yarn build",
+    "test-app:serve": "serve -s -l 3000 client/build",
+    "testcafe:test": "npx testcafe chrome testcafe/**/*.spec.js",
+    "cypress:open": "yarn cypress open",
+    "cypress:test": "yarn cypress run"
+  },
+  "author": "Abhinaba Ghosh <askabhinaba@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "cypress": "^4.11.0",
+    "cypress-graphql-mock": "0.3.1",
+    "graphql": "^14.0.2",
+    "testcafe": "^1.8.8",
+    "testcafe-graphql-mock": "0.0.4"
+  }
+}
