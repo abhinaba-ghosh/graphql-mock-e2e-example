@@ -1,47 +1,77 @@
 # Testcafe-Cypress-GraphQL-Mock-Example
 
-# testcafe-graphql-mock
+| Library Used          | NPM Link                                                    |
+| --------------------- | ----------------------------------------------------------- |
+| cypress-graphql-mock  | [here](https://www.npmjs.com/package/testcafe-graphql-mock) |
+| testcafe-graphql-mock | [here](https://www.npmjs.com/package/cypress-graphql-mock)  |
 
-## API available
+## Instructions to test:
 
-```ts
-interface MockGraphQLOptions {
-  schema: string | string[] | IntrospectionQuery;
-  mock: IMocks;
-  delay?: number;
-}
+- start the client app
 
-mockGraphQL(options: MockGraphQLOptions, req, res);
+```ssh
+cd client
+
+npm install
+
+SKIP_PREFLIGHT_CHECK=true npm start
 ```
 
-## Basic Usage
+- Testcafe mock tests
+
+```ssh
+# start another terminal in root directory
+
+npm run testcafe:test
+```
+
+- Cypress mock tests
+
+```ssh
+npm run cypress:test
+```
+
+## cypress-graphql-mock
+
+### Basic usage
+
+```js
+beforeEach(() => {
+  cy.task('getSchema').then((schema) => {
+    cy.mockGraphql({});
+  });
+});
+
+it('Should mock getUser', () => {
+  cy.mockGraphqlOps({
+    operations: {
+      getUser: {
+        user: {
+          id: 1,
+          name: 'Name',
+          email: 'Email',
+        },
+      },
+    },
+  });
+
+  cy.visit('/');
+  cy.get('#GET_USER').click();
+  cy.get('#data').should(
+    'contain',
+    JSON.stringify({
+      user: { id: 1, name: 'Name', email: 'Email', __typename: 'User' },
+    })
+  );
+});
+```
+
+## testcafe-graphql-mock
+
+### Basic Usage
 
 ```js
 import { mockGraphQL } from 'testcafe-graphql-mock';
-
-// define the schema
-const schema = `
-type Person {
-  firstname: String!
-  surname: String!
-}
-
-type Query {
-  people: [Person]
-}
-`;
-
-// define the mock
-const mock = {
-  Query: () => ({
-    people: () => [
-      {
-        firstname: 'Lee',
-        surname: 'Byron',
-      },
-    ],
-  }),
-};
 
 // create traditional testcafe request mock
 const requestMock = RequestMock()
@@ -66,48 +96,4 @@ test('test graphql mock data', async (t) => {
   await t.click(Selector('button'));
   await expect(Selector('div')).contains('Lee Byron');
 });
-```
-
-## Read schema from .graphql file
-
-You need to use `graphQLSchemaFromFile` method from the library.
-
-```js
-import { graphQLSchemaFromFile } from 'testcafe-graphql-mock';
-
-// use the graphql schema reader method in your request mocks
-const requestMock = RequestMock()
-  .onRequestTo({ url: 'http://localhost:3000/graphql', method: 'POST' })
-  .respond(async (req, res) => {
-    await mockGraphQL(
-      {
-        schema: graphQLSchemaFromFile(
-          `${process.cwd()}/test/test-schema.graphql`
-        ),
-        mock,
-      },
-      req,
-      res
-    );
-  });
-```
-
-## Delay the GraphQL mocked response
-
-use the `delay` (in milliseconds) parameter in `mockGraphQL({})` options
-
-```js
-const requestMock = RequestMock()
-  .onRequestTo({ url: 'http://localhost:3000/graphql', method: 'POST' })
-  .respond(async (req, res) => {
-    await mockGraphQL(
-      {
-        schema,
-        mock,
-        delay: 5000,
-      },
-      req,
-      res
-    );
-  });
 ```
