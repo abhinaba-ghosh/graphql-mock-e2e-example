@@ -1,4 +1,4 @@
-# Testcafe-Cypress-GraphQL-Mock-Example
+# GraphQL-Mock-Example: Testcafe vs Cypress
 
 | Library Used          | NPM Link                                                    |
 | --------------------- | ----------------------------------------------------------- |
